@@ -29,7 +29,7 @@ const sendReportEmail = async (filePath) => {
     from: process.env.SMTP_EMAIL,
     to: [
       "adityabilware407@gmail.com",
-      "aditya.bilware@necsws.com",
+      // "aditya.bilware@necsws.com",
       // "shubham.khuje@necsws.com",
     ],
     subject: `Tast Completion Daily Report : ${reportDate}`,

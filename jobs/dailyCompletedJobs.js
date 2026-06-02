@@ -4,7 +4,7 @@ const Task = require("../models/Task.js");
 const { sendReportEmail } = require("../services/emailService.js");
 
 cron.schedule(
-  "15 18 * * 1-5",
+  "* * * * 1-5",
   async () => {
     console.log("Running daily report job...");
     const fs = require("fs");

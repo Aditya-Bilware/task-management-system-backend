@@ -117,11 +117,13 @@ const generateCompletedTaskReport = async (tasks) => {
 
   applyWorksheetStyles(worksheet);
 
-  const filePath = path.join(
-    process.cwd(),
-    "reports",
-    `completed_tasks_${Date.now()}.xlsx`,
-  );
+  const reportsDir = path.join(process.cwd(), "reports");
+
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true });
+  }
+
+  const filePath = path.join(reportsDir, `completed_tasks_${Date.now()}.xlsx`);
 
   await workbook.xlsx.writeFile(filePath);
 
