@@ -15,7 +15,10 @@ const app = express();
 app.use(
   cors({
     // origin: ["http://localhost:5173", "https://Aditya-Bilware.github.io"],
-    origin: true,
+    origin: [
+      "http://localhost:5173",
+      "https://task-management-system-frontend.vercel.app",
+    ],
     credentials: true,
   }),
 );
