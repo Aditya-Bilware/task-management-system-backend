@@ -1,6 +1,8 @@
 const ExcelJs = require("exceljs");
 const path = require("path");
 
+const fs = require("fs");
+
 const { applyWorksheetStyles } = require("../utils/excelStyles");
 
 const generateCompletedTaskReport = async (tasks) => {
