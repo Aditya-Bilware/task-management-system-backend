@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     credentials: true,
   }),
 );
@@ -38,8 +38,8 @@ app.use("/api/tasks", taskRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
 
-const host = "127.0.0.1";
+// const host = "127.0.0.1";
 const port = process.env.PORT || 3000;
-app.listen(port, host, () => {
-  console.log(`server is running on http://${host}:${port}`);
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`);
 });
