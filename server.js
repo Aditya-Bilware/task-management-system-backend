@@ -14,7 +14,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://Aditya-Bilware.github.io"],
+    // origin: ["http://localhost:5173", "https://Aditya-Bilware.github.io"],
+    origin: true,
     credentials: true,
   }),
 );
