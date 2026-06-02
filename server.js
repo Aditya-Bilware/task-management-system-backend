@@ -14,10 +14,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: true,
+    origin: ["http://localhost:5173", "https://Aditya-Bilware.github.io"],
     credentials: true,
   }),
 );
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
