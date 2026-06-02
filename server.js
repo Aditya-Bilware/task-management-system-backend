@@ -17,7 +17,7 @@ app.use(
     // origin: ["http://localhost:5173", "https://Aditya-Bilware.github.io"],
     origin: [
       "http://localhost:5173",
-      "https://task-management-system-frontend.vercel.app",
+      "https://task-management-system-frontend-pi.vercel.app",
     ],
     credentials: true,
   }),
