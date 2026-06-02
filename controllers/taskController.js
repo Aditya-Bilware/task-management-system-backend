@@ -2,6 +2,8 @@ const { mongoose } = require("mongoose");
 const Task = require("../models/Task");
 const User = require("../models/User");
 const TaskActivityLog = require("../models/TaskActivityLog");
+const { normalizeDate } = require("../utils/normalizedDate");
+const { escapeRegex } = require("../utils/regex");
 
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
@@ -34,14 +36,14 @@ const createTask = async (req, res) => {
 
     // min title length
     if (title.length < 3) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Title is too short",
       });
     }
 
     // max title length
     if (title.length > 100) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Title is too long",
       });
     }
@@ -79,12 +81,11 @@ const createTask = async (req, res) => {
         });
       }
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const today = normalizeDate(new Date());
 
-      taskDueDate.setHours(0, 0, 0, 0);
+      const normalizedDueDate = normalizeDate(taskDueDate);
 
-      if (taskDueDate < today) {
+      if (normalizedDueDate < today) {
         return res.status(400).json({
           message: "Due date can not be in the past",
         });
@@ -123,17 +124,10 @@ const createTask = async (req, res) => {
 
     await TaskActivityLog.create({
       taskId: task._id,
-      action: "created",
-      performedBy: req.user.id,
 
-      newValue: {
-        title: task.title,
-        description: task.description,
-        priority: task.priority,
-        status: task.status,
-        assignedTo: task.assignedTo,
-        dueDate: task.dueDate,
-      },
+      action: "created",
+
+      performedBy: req.user.id,
     });
 
     res.status(201).json({
@@ -148,16 +142,28 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   try {
-    let info = {
+    // pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    // filtering
+    const search = req.query.search || "";
+    const status = req.query.status || "";
+    const priority = req.query.priority || "";
+    const assignedTo = req.query.assignedTo || "";
+
+    let filter = {
       isDeleted: false,
     };
 
     if (req.user.role === "manager") {
-      info = {
+      filter = {
         isDeleted: false,
       };
     } else if (req.user.role === "employee") {
-      info = {
+      filter = {
         assignedTo: req.user.id,
         isDeleted: false,
       };
@@ -167,16 +173,234 @@ const getTasks = async (req, res) => {
       });
     }
 
-    const tasks = await Task.find(info)
-      .populate("assignedTo", "employeeCode name email -_id")
+    // filter by search, status,priority,assignedTo
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (priority) {
+      filter.priority = priority;
+    }
+
+    if (assignedTo && req.user.role === "manager") {
+      filter.assignedTo = assignedTo;
+    }
+
+    // total tasks
+    const totalTasks = await Task.countDocuments(filter);
+
+    const tasks = await Task.find(filter)
+      .populate("assignedTo", "employeeCode name email ")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Tasks fetched successfully",
       tasks,
+      pagination: {
+        totalTasks,
+        currentPage: page,
+        totalPages: Math.ceil(totalTasks / limit),
+        limit,
+      },
     });
   } catch (err) {
     console.log("get task error", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getTaskHistory = async (req, res) => {
+  try {
+    // pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    // filtering
+    const search = req.query.search || "";
+    const filter = req.query.filter || "";
+
+    let query = {
+      $or: [
+        {
+          status: "done",
+        },
+        {
+          status: "rejected",
+        },
+        {
+          isDeleted: true,
+        },
+      ],
+    };
+
+    // search
+    if (search) {
+      query.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    if (req.user.role === "manager") {
+    } else if (req.user.role === "employee") {
+      query.assignedTo = req.user.id;
+    } else {
+      return res.status(403).json({
+        message: "Access Denied",
+      });
+    }
+
+    const tasks = await Task.find(query)
+      .populate("assignedTo", "employeeCode name email ")
+      .populate("deletedBy", "employeeCode name email")
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    const formattedTasks = await Promise.all(
+      tasks.map(async (task) => {
+        let activity = null;
+
+        let finalStatus = "";
+
+        if (task.isDeleted) {
+          finalStatus = "deleted";
+        } else if (task.status === "done") {
+          finalStatus = "completed";
+        } else if (task.status === "rejected") {
+          finalStatus = "rejected";
+        }
+
+        if (finalStatus === "deleted") {
+          activity = await TaskActivityLog.findOne({
+            taskId: task._id,
+            action: "deleted",
+          })
+            .populate("performedBy", "employeeCode name email")
+            .sort({ createdAt: -1 })
+            .lean();
+        } else {
+          activity = await TaskActivityLog.findOne({
+            taskId: task._id,
+
+            action: "updated",
+            fieldChanged: "status",
+            newValue: task.status,
+          })
+            .populate("performedBy", "employeeCode name email")
+            .sort({ createdAt: -1 })
+            .lean();
+        }
+
+        return {
+          ...task,
+
+          finalStatus,
+
+          performedBy: activity?.performedBy || null,
+
+          actionDate: activity?.createdAt || null,
+        };
+      }),
+    );
+
+    let filteredTasks = formattedTasks;
+
+    if (filter === "completed") {
+      filteredTasks = formattedTasks.filter(
+        (task) => task.finalStatus === "completed",
+      );
+    }
+
+    if (filter === "rejected") {
+      filteredTasks = formattedTasks.filter(
+        (task) => task.finalStatus === "rejected",
+      );
+    }
+
+    if (filter === "deleted") {
+      filteredTasks = formattedTasks.filter(
+        (task) => task.finalStatus === "deleted",
+      );
+    }
+
+    console.log(
+      filteredTasks.map((t) => ({
+        title: t.title,
+
+        status: t.status,
+
+        finalStatus: t.finalStatus,
+
+        isDeleted: t.isDeleted,
+      })),
+    );
+
+    const totalTasks = filteredTasks.length;
+
+    const paginatedTasks = filteredTasks.slice(skip, skip + limit);
+
+    return res.status(200).json({
+      message: "Tasks history fetched successfully",
+      tasks: paginatedTasks,
+      pagination: {
+        totalTasks,
+        currentPage: page,
+        totalPages: Math.ceil(totalTasks / limit),
+        limit,
+      },
+    });
+  } catch (err) {
+    console.log("get task history error", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getTaskById = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: "Invalid Task ID",
+      });
+    }
+
+    const task = await Task.findById(req.params.id)
+      .populate("assignedTo", "employeeCode name email")
+      .populate("createdBy", "employeeCode name email role")
+      .select("-__v")
+      .lean();
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    if (req.user.role === "employee") {
+      if (task.assignedTo?._id.toString() !== req.user.id) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+    }
+
+    return res.status(200).json({
+      message: "Task fetched successfully",
+      task,
+    });
+  } catch (err) {
+    console.log("get task by ID error", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -245,7 +469,8 @@ const updateTask = async (req, res) => {
         }
       }
 
-      normalizedTitle = req.body.title.trim().replace(/\s+/g, " ");
+      if ("title" in req.body)
+        normalizedTitle = req.body.title.trim().replace(/\s+/g, " ");
 
       if (normalizedTitle.length < 3) {
         return res.status(400).json({
@@ -270,7 +495,10 @@ const updateTask = async (req, res) => {
         }
       }
 
-      normalizedDescription = req.body.description.trim().replace(/\s+/g, " ");
+      if ("description" in req.body)
+        normalizedDescription = req.body.description
+          .trim()
+          .replace(/\s+/g, " ");
 
       // Invalid status
       if (req.body.status && !allowedStatuses.includes(req.body.status)) {
@@ -313,12 +541,11 @@ const updateTask = async (req, res) => {
           });
         }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = normalizeDate(new Date());
 
-        dueDate.setHours(0, 0, 0, 0);
+        const normalizedDueDate = normalizeDate(req.body.dueDate);
 
-        if (dueDate < today) {
+        if (normalizedDueDate < today) {
           return res.status(400).json({
             message: "Due date can not be in the past",
           });
@@ -329,7 +556,7 @@ const updateTask = async (req, res) => {
       if (normalizedTitle !== task.title || req.body.assignedTo) {
         const duplicateTask = await Task.exists({
           _id: { $ne: task._id },
-          title: new RegExp(`^${normalizedTitle}$`, "i"),
+          title: new RegExp(`^${escapeRegex(normalizedTitle)}$`, "i"),
           assignedTo: req.body.assignedTo || task.assignedTo,
           isDeleted: false,
           status: {
@@ -357,6 +584,10 @@ const updateTask = async (req, res) => {
       }
 
       if ("status" in req.body) {
+        if (req.body.status === "done" && task.status !== "done") {
+          task.completedAt = new Date();
+        }
+
         task.status = req.body.status;
       }
 
@@ -416,6 +647,9 @@ const updateTask = async (req, res) => {
         });
       }
 
+      if (req.body.status === "done" && task.status !== "done") {
+        task.completedAt = new Date();
+      }
       task.status = req.body.status;
     } else {
       return res.status(403).json({
@@ -423,9 +657,16 @@ const updateTask = async (req, res) => {
       });
     }
 
-    const updatedTask = await task.save();
+    await task.save();
 
+    const updatedTask = await Task.findById(task._id)
+      .populate("assignedTo", "name employeeCode email")
+      .lean();
     // activity log for update task
+
+    const oldAssignedUser = await User.findById(oldTask.assignedTo);
+
+    const newAssignedUser = await User.findById(task.assignedTo);
 
     const activityLogs = [];
 
@@ -478,8 +719,8 @@ const updateTask = async (req, res) => {
         taskId: task._id,
         action: "updated",
         fieldChanged: "assignedTo",
-        oldValue: oldTask.assignedTo,
-        newValue: task.assignedTo,
+        oldValue: oldAssignedUser?.name,
+        newValue: newAssignedUser?.name,
         performedBy: req.user.id,
       });
     }
@@ -558,57 +799,11 @@ const deleteTask = async (req, res) => {
   }
 };
 
-const getActivityLogs = async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        message: "Invalid Task ID",
-      });
-    }
-
-    const task = await Task.findById(req.params.id);
-
-    if (!task) {
-      return res.status(404).json({
-        message: "Task not exists",
-      });
-    }
-
-    if (req.user.role === "manager") {
-    } else if (req.user.role === "employee") {
-      if (task.assignedTo.toString() !== req.user.id) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-    } else {
-      return res.status(403).json({
-        message: "Invalid role",
-      });
-    }
-
-    const logs = await TaskActivityLog.find({
-      taskId: req.params.id,
-    })
-      .populate("performedBy", "employeeCode name email -_id")
-      .select("-__v")
-      .lean();
-
-    return res.status(200).json({
-      message: "Activity logs fetched successfully",
-      totalLogs: logs.length,
-      logs,
-    });
-  } catch (err) {
-    console.log("get activity logs error", err);
-    return res.status(500).json({
-      message: err.message,
-    });
-  }
-};
-
 module.exports = {
   createTask,
   getTasks,
+  getTaskHistory,
+  getTaskById,
   updateTask,
   deleteTask,
-  getActivityLogs,
 };

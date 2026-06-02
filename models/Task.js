@@ -7,6 +7,7 @@ const taskSchema = new mongoose.Schema(
     priority: {
       type: String,
       enum: ["critical", "major", "minor", "blocker", "medium", "unassigned"],
+      default: "unassigned",
       required: true,
     },
     status: {
@@ -31,6 +32,10 @@ const taskSchema = new mongoose.Schema(
     deletedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: null,
+    },
+    completedAt: {
+      type: Date,
       default: null,
     },
     deletedAt: {
