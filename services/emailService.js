@@ -9,7 +9,7 @@ const reportDate = new Date()
   .replace(/\//g, "-");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
   requireTLS: true,
