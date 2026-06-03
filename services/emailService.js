@@ -8,6 +8,10 @@ const reportDate = new Date()
   })
   .replace(/\//g, "-");
 
+console.log("SMTP_EMAIL:", process.env.SMTP_EMAIL);
+console.log("SMTP_PASSWORD exists:", !!process.env.SMTP_PASSWORD);
+console.log("Using Brevo SMTP");
+
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
