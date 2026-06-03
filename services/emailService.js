@@ -32,7 +32,7 @@ transporter.verify((error, success) => {
 });
 
 const sendReportEmail = async (filePath) => {
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: process.env.SMTP_EMAIL,
     to: [
       "adityabilware407@gmail.com",
@@ -48,6 +48,7 @@ const sendReportEmail = async (filePath) => {
       },
     ],
   });
+  console.log("MAIL INFO:", info);
 };
 
 module.exports = { sendReportEmail };
