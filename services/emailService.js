@@ -33,7 +33,7 @@ transporter.verify((error, success) => {
 
 const sendReportEmail = async (filePath) => {
   const info = await transporter.sendMail({
-    from: process.env.SMTP_EMAIL,
+    from: "NEC software solutions <adityabilware407@gmail.com>",
     to: [
       "adityabilware407@gmail.com",
       "aditya.bilware@necsws.com",
