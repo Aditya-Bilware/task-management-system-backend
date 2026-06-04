@@ -3,7 +3,9 @@ const dayjs = require("dayjs");
 const { sendTaskEmail } = require("./emailService");
 
 const sendTaskAssignmentMail = async (task) => {
-  const dueDate = dayjs(task.dueDate).format("DD/MM/YYYY");
+  const dueDate = task.dueDate
+    ? dayjs(task.dueDate).format("DD/MM/YYYY")
+    : "N/A";
 
   try {
     const html = `
@@ -38,7 +40,7 @@ const sendTaskAssignmentMail = async (task) => {
             </tr>
             <tr>
                 <td><strong>Due Date</strong></td>
-                <td>${dueDate ? new Date(task.dueDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) : "N/A"}</td>
+                <td>${dueDate}</td>
             </tr>
         </table>
         <br>
@@ -67,9 +69,18 @@ const sendTaskAssignmentMail = async (task) => {
                     <li>Add an Employee filter to the Task History page</li>
                     <li>Change due date validation so past dates are not allowed</li>
                     <li>Allow employees to assign tasks to themselves</li>
-                    <li>Conduct application testing with Aniket and Poonam and implement necessary improvements based on their feedback</li>
+                    <li>Conduct application testing with QA team and implement necessary improvements based on their feedback</li>
                 </ol>
         <br>
+
+        <p>Please review the feedback and let me know if there are any corrections need to be done, thanks</p>
+
+        <br>
+        <hr>
+
+        <p style="font-size: 12px; color: gray;">
+        This is an automatically generated email from the Task Management System. Please do not reply to this email.
+        </p>
 
         <p>Regards, <br>
         Task Management System</p>
