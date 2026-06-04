@@ -1,6 +1,10 @@
+const dayjs = require("dayjs");
+
 const { sendTaskEmail } = require("./emailService");
 
 const sendTaskAssignmentMail = async (task) => {
+  const dueDate = dayjs(task.dueDate).format("DD/MM/YYYY");
+
   try {
     const html = `
   <div style="font-family: Arial, sans-serif;">
@@ -34,11 +38,14 @@ const sendTaskAssignmentMail = async (task) => {
             </tr>
             <tr>
                 <td><strong>Due Date</strong></td>
-                <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-IN") : "N/A"}</td>
+                <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) : "N/A"}</td>
             </tr>
         </table>
         <br>
         <h3>Description</h3>
+            <p>
+            The following are the feedback points identified during the first presentation review of the Task Management System.
+            </p>
             <h4>Presentation Improvements</h3>
                 <ol>
                     <li>Remove "Commercial in Confidence" from the slide footer and add the presentation date</li>
@@ -65,7 +72,7 @@ const sendTaskAssignmentMail = async (task) => {
         <br>
 
         <p>Regards, <br>
-        Aditya</p>
+        Task Management System</p>
         </div>
     `;
 

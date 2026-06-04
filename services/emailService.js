@@ -55,7 +55,11 @@ const sendReportEmail = async (filePath) => {
 const sendTaskEmail = async (subject, html) => {
   return transporter.sendMail({
     from: "NEC Software Solutions <adityabilware407@gmail.com>",
-    to: ["adityabilware407@gmail.com", "aditya.bilware@necsws.com"],
+    to: [
+      "adityabilware407@gmail.com",
+      "aditya.bilware@necsws.com",
+      "shubham.khuje@necsws.com",
+    ],
     subject,
     html,
   });
