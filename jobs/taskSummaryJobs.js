@@ -3,7 +3,7 @@ const Task = require("../models/Task");
 
 const { sendTaskAssignmentMail } = require("../services/assignTaskService.js");
 
-cron.schedule("*/2 * * * *", async () => {
+cron.schedule("30 9 * * *", async () => {
   console.log("Running task summary email job...");
 
   try {

@@ -57,9 +57,9 @@ const sendTaskEmail = async (subject, html) => {
     from: "NEC Software Solutions <adityabilware407@gmail.com>",
     to: [
       // "adityabilware407@gmail.com",
-      "tushar.dave@necsws.com",
-      "shubham.khuje@necsws.com",
-      "aditya.bilware@necsws.com",
+      // "tushar.dave@necsws.com",
+      // "shubham.khuje@necsws.com",
+      // "aditya.bilware@necsws.com",
     ],
     subject,
     html,
