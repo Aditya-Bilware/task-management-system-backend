@@ -39,7 +39,7 @@ const sendTaskAssignmentMail = async (task) => {
         </table>
         <br>
         <h3>Description</h3>
-        <p>${task.description}</p>
+        <p>${task.description.replace("/\n/g", "<br>")}</p>
         <br>
 
         <p>Regards, <br>
