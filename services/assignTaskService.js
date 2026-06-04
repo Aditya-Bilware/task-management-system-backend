@@ -1,4 +1,4 @@
-const { transporter } = require("./emailService");
+const { sendTaskEmail } = require("./emailService");
 
 const sendTaskAssignmentMail = async (task) => {
   try {
@@ -47,15 +47,14 @@ const sendTaskAssignmentMail = async (task) => {
         </div>
     `;
 
-    const info = await transporter.sendMail({
-      from: "NEC Software Solutions <adityabilware407@gmail.com>",
-      to: ["adityabilware407@gmai.com", "aditya.bilware@necsws.com"],
-      subject: `[TMS] Task Summary - ${task.title}`,
+    const info = await sendTaskEmail(
+      `[TMS] Task Summary - ${task.title}`,
       html,
-    });
+    );
     console.log("Task summary mail send");
   } catch (err) {
     console.log("Error while sending task summary", err);
+    throw err;
   }
 };
 
