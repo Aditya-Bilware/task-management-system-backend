@@ -7,6 +7,7 @@ const taskRoutes = require("./routes/taskRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const userRoutes = require("./routes/userRoutes");
 const reports = require("./jobs/dailyCompletedJobs.js");
+require("./jobs/taskSummaryJobs.js");
 const cors = require("cors");
 
 connectDB();
