@@ -58,7 +58,7 @@ const sendTaskEmail = async (subject, html) => {
     to: [
       "adityabilware407@gmail.com",
       "aditya.bilware@necsws.com",
-      "shubham.khuje@necsws.com",
+      // "shubham.khuje@necsws.com",
     ],
     subject,
     html,

@@ -38,7 +38,7 @@ const sendTaskAssignmentMail = async (task) => {
             </tr>
             <tr>
                 <td><strong>Due Date</strong></td>
-                <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) : "N/A"}</td>
+                <td>${dueDate ? new Date(task.dueDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) : "N/A"}</td>
             </tr>
         </table>
         <br>
