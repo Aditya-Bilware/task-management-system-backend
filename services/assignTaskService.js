@@ -3,9 +3,11 @@ const dayjs = require("dayjs");
 const { sendTaskEmail } = require("./emailService");
 
 const sendTaskAssignmentMail = async (task) => {
-  const dueDate = task.dueDate
-    ? dayjs(task.dueDate).format("DD/MM/YYYY")
-    : "N/A";
+  const dueDate = new Date(task?.dueDate).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   try {
     const html = `
