@@ -4,6 +4,7 @@ const { sendTaskEmail } = require("./emailService");
 
 const sendTaskAssignmentMail = async (task) => {
   const dueDate = new Date(task?.dueDate).toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
