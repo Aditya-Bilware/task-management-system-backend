@@ -87,7 +87,7 @@ const createTask = async (req, res) => {
 
       if (normalizedDueDate < today) {
         return res.status(400).json({
-          message: "Due date can not be in the past",
+          message: "Due date cannot be in the past",
         });
       }
     }
@@ -230,20 +230,30 @@ const getTaskHistory = async (req, res) => {
     // filtering
     const search = req.query.search || "";
     const filter = req.query.filter || "";
+    const assignedTo = req.query.assignedTo || "";
 
-    let query = {
-      $or: [
-        {
-          status: "done",
-        },
-        {
-          status: "rejected",
-        },
-        {
-          isDeleted: true,
-        },
-      ],
-    };
+    const query = {};
+
+    if (!filter || filter === "all-history") {
+      query.$or = [
+        { status: "done" },
+        { status: "rejected" },
+        { isDeleted: true },
+      ];
+    }
+
+    if (filter === "completed") {
+      query.status = "done";
+    }
+    if (filter === "rejected") {
+      query.status = "rejected";
+    }
+    if (filter === "deleted") {
+      query.isDeleted = true;
+    }
+    if (assignedTo) {
+      query.assignedTo = assignedTo;
+    }
 
     // search
     if (search) {
