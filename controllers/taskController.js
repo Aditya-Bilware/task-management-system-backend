@@ -154,8 +154,6 @@ const getTasks = async (req, res) => {
     const priority = req.query.priority || "";
     const assignedTo = req.query.assignedTo || "";
 
-    const dashboardFilter = req.query.dashboardFilter || "";
-
     let filter = {
       isDeleted: false,
     };
@@ -183,36 +181,20 @@ const getTasks = async (req, res) => {
       };
     }
 
-    if (dashboardFilter === "active") {
-      filter.status = {
-        $in: ["next", "in-progress"],
-      };
-    } else if (dashboardFilter === "overdue") {
-      const today = normalizeDate(new Date());
-
-      filter.dueDate = {
-        $lt: today,
-      };
-
-      filter.status = {
-        $nin: ["done", "rejected"],
-      };
-    } else if (status) {
-      filter.status = status;
-    }
-
     if (status === "active") {
       filter.status = {
         $in: ["next", "in-progress"],
       };
     } else if (status === "overdue") {
+      const today = normalizeDate(new Date());
       filter.dueDate = {
-        $lt: normalizeDate(new Date()),
+        $lt: today,
       };
-
       filter.status = {
         $nin: ["done", "rejected"],
       };
+    } else if (status) {
+      filter.status = status;
     }
 
     if (priority) {
