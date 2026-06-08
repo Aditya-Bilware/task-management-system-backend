@@ -22,25 +22,29 @@ const getStats = async (req, res) => {
 
     const totalTasks = await Task.countDocuments(filter);
 
-    const pendingTasks = await Task.countDocuments({
+    const activeTasks = await Task.countDocuments({
+      ...filter,
+      status: {
+        $in: ["in-progress", "next"],
+      },
+    });
+
+    const overdueTasks = await Task.countDocuments({
       ...filter,
       dueDate: {
-        $lt: new Date(),
+        $lt: normalizeDate(new Date()),
       },
       status: {
         $nin: ["done", "rejected"],
       },
     });
 
-    console.log(pendingTasks);
-    const inProgressTasks = await Task.countDocuments({
-      ...filter,
-      status: "in-progress",
-    });
-
     const criticalTasks = await Task.countDocuments({
       ...filter,
       priority: "critical",
+      status: {
+        $nin: ["done", "rejected"],
+      },
     });
 
     const completedTasks = await Task.countDocuments({
@@ -53,8 +57,8 @@ const getStats = async (req, res) => {
 
       stats: {
         totalTasks,
-        pendingTasks,
-        inProgressTasks,
+        activeTasks,
+        overdueTasks,
         criticalTasks,
         completedTasks,
       },
