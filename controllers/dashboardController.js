@@ -97,6 +97,7 @@ const getRecentTasks = async (req, res) => {
       .sort({ updatedAt: -1 })
       .limit(10)
       .populate("assignedTo", "name")
+      .populate("createdBy", "employeeCode name email")
       .select("-deletedBy -createdAt -updatedAt -__v -deletedAt -isDeleted")
       .lean();
 
