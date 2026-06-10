@@ -141,7 +141,7 @@ const createTask = async (req, res) => {
       dueDate,
       createdBy: req.user.id,
     });
-    console.log("task created");
+    // console.log("task created");
 
     // Activity log for task created
 
@@ -381,17 +381,17 @@ const getTaskHistory = async (req, res) => {
       );
     }
 
-    console.log(
-      filteredTasks.map((t) => ({
-        title: t.title,
+    // console.log(
+    //   filteredTasks.map((t) => ({
+    //     title: t.title,
 
-        status: t.status,
+    //     status: t.status,
 
-        finalStatus: t.finalStatus,
+    //     finalStatus: t.finalStatus,
 
-        isDeleted: t.isDeleted,
-      })),
-    );
+    //     isDeleted: t.isDeleted,
+    //   })),
+    // );
 
     const totalTasks = filteredTasks.length;
 
