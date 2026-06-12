@@ -105,11 +105,17 @@ const createTask = async (req, res) => {
         });
       }
 
-      const today = normalizeDate(new Date());
+      // const today = normalizeDate(new Date());
 
-      const normalizedDueDate = normalizeDate(taskDueDate);
+      // const normalizedDueDate = normalizeDate(taskDueDate);
 
-      if (normalizedDueDate < today) {
+      // if (normalizedDueDate < today) {
+      //   return res.status(400).json({
+      //     message: "Due date cannot be in the past",
+      //   });
+      // }
+
+      if (taskDueDate < getStartOfTodayIST()) {
         return res.status(400).json({
           message: "Due date cannot be in the past",
         });
@@ -594,7 +600,7 @@ const updateTask = async (req, res) => {
 
         if (dueDate < getStartOfTodayIST()) {
           return res.status(400).json({
-            message: "Due date can not be in the past",
+            message: "Due date cannot be in the past",
           });
         }
       }
@@ -756,7 +762,7 @@ const updateTask = async (req, res) => {
 
           if (dueDate < getStartOfTodayIST()) {
             return res.status(400).json({
-              message: "Due date can not be in the past",
+              message: "Due date cannot be in the past",
             });
           }
         }
