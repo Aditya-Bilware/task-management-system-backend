@@ -588,11 +588,11 @@ const updateTask = async (req, res) => {
           });
         }
 
-        const today = normalizeDate(new Date());
+        // const today = normalizeDate(new Date());
 
-        const normalizedDueDate = normalizeDate(req.body.dueDate);
+        // const normalizedDueDate = normalizeDate(req.body.dueDate);
 
-        if (normalizedDueDate < today) {
+        if (dueDate < getStartOfTodayIST()) {
           return res.status(400).json({
             message: "Due date can not be in the past",
           });
