@@ -4,6 +4,7 @@ const User = require("../models/User");
 const TaskActivityLog = require("../models/TaskActivityLog");
 const { normalizeDate } = require("../utils/normalizedDate");
 const { escapeRegex } = require("../utils/regex");
+const { getISTDateString } = require("../utils/getISTDate");
 
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
@@ -209,7 +210,7 @@ const getTasks = async (req, res) => {
         $in: ["next", "in-progress"],
       };
     } else if (status === "overdue") {
-      const today = normalizeDate(new Date());
+      const today = getISTDateString(new Date());
       filter.dueDate = {
         $lt: today,
       };
