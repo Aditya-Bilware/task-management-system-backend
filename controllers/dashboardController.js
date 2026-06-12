@@ -1,7 +1,6 @@
 const Task = require("../models/Task");
 const TaskActivityLog = require("../models/TaskActivityLog");
 const { normalizeDate } = require("../utils/normalizedDate");
-const { normalizeUTCDate } = require("../utils/normalizedUTCDate");
 
 const getStats = async (req, res) => {
   try {
@@ -30,25 +29,28 @@ const getStats = async (req, res) => {
       },
     });
 
-    const overdueTasksList = await Task.find({
-      ...filter,
-      dueDate: {
-        $lt: normalizeUTCDate(new Date()),
-      },
-      status: {
-        $nin: ["done", "rejected"],
-      },
-    }).select("title dueDate status");
+    // const overdueTasksList = await Task.find({
+    //   ...filter,
+    //   dueDate: {
+    //     $lt: normalizeDate(new Date()),
+    //   },
+    //   status: {
+    //     $nin: ["done", "rejected"],
+    //   },
+    // }).select("title dueDate status");
 
-    console.log(
-      "OVERDUE TASKS:",
-      overdueTasksList.map((t) => t.title),
-    );
+    // console.log(
+    //   "OVERDUE TASKS:",
+    //   overdueTasksList.map((t) => t.title),
+    // );
+
+    console.log("SERVER NOW:", new Date());
+    console.log("NORMALIZED TODAY:", normalizeDate(new Date()));
 
     const overdueTasks = await Task.countDocuments({
       ...filter,
       dueDate: {
-        $lt: normalizeUTCDate(new Date()),
+        $lt: normalizeDate(new Date()),
       },
       status: {
         $nin: ["done", "rejected"],
