@@ -29,6 +29,21 @@ const getStats = async (req, res) => {
       },
     });
 
+    const overdueTasksList = await Task.find({
+      ...filter,
+      dueDate: {
+        $lt: normalizeDate(new Date()),
+      },
+      status: {
+        $nin: ["done", "rejected"],
+      },
+    }).select("title dueDate status");
+
+    console.log(
+      "OVERDUE TASKS:",
+      overdueTasksList.map((t) => t.title),
+    );
+
     const overdueTasks = await Task.countDocuments({
       ...filter,
       dueDate: {
