@@ -3,7 +3,7 @@ const normalizeDate = (date) => {
 
   d.setHours(0, 0, 0, 0);
 
-  // return d;
+  return d;
 };
 
 module.exports = { normalizeDate };
