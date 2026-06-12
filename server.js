@@ -9,9 +9,15 @@ const userRoutes = require("./routes/userRoutes");
 // const reports = require("./jobs/dailyCompletedJobs.js");
 // require("./jobs/taskSummaryJobs.js");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 connectDB();
 const app = express();
+
+mongoose.connection.once("open", () => {
+  console.log("DB Name:", mongoose.connection.name);
+  console.log("DB Host:", mongoose.connection.host);
+});
 
 app.use(
   cors({
