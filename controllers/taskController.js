@@ -4,7 +4,6 @@ const User = require("../models/User");
 const TaskActivityLog = require("../models/TaskActivityLog");
 const { normalizeDate } = require("../utils/normalizedDate");
 const { escapeRegex } = require("../utils/regex");
-const { getStartOfTodayIST } = require("../utils/startOfToday");
 
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
@@ -105,17 +104,11 @@ const createTask = async (req, res) => {
         });
       }
 
-      // const today = normalizeDate(new Date());
+      const today = normalizeDate(new Date());
 
-      // const normalizedDueDate = normalizeDate(taskDueDate);
+      const normalizedDueDate = normalizeDate(taskDueDate);
 
-      // if (normalizedDueDate < today) {
-      //   return res.status(400).json({
-      //     message: "Due date cannot be in the past",
-      //   });
-      // }
-
-      if (taskDueDate < getStartOfTodayIST()) {
+      if (normalizedDueDate < today) {
         return res.status(400).json({
           message: "Due date cannot be in the past",
         });
@@ -216,9 +209,9 @@ const getTasks = async (req, res) => {
         $in: ["next", "in-progress"],
       };
     } else if (status === "overdue") {
-      // const today = normalizeDate(new Date());
+      const today = normalizeDate(new Date());
       filter.dueDate = {
-        $lt: getStartOfTodayIST(),
+        $lt: today,
       };
       filter.status = {
         $nin: ["done", "rejected"],
@@ -594,13 +587,13 @@ const updateTask = async (req, res) => {
           });
         }
 
-        // const today = normalizeDate(new Date());
+        const today = normalizeDate(new Date());
 
-        // const normalizedDueDate = normalizeDate(req.body.dueDate);
+        const normalizedDueDate = normalizeDate(req.body.dueDate);
 
-        if (dueDate < getStartOfTodayIST()) {
+        if (normalizedDueDate < today) {
           return res.status(400).json({
-            message: "Due date cannot be in the past",
+            message: "Due date can not be in the past",
           });
         }
       }
@@ -756,13 +749,13 @@ const updateTask = async (req, res) => {
             });
           }
 
-          // const today = normalizeDate(new Date());
+          const today = normalizeDate(new Date());
 
-          // const normalizedDueDate = normalizeDate(req.body.dueDate);
+          const normalizedDueDate = normalizeDate(req.body.dueDate);
 
-          if (dueDate < getStartOfTodayIST()) {
+          if (normalizedDueDate < today) {
             return res.status(400).json({
-              message: "Due date cannot be in the past",
+              message: "Due date can not be in the past",
             });
           }
         }
