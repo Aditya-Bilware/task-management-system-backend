@@ -14,11 +14,6 @@ const mongoose = require("mongoose");
 connectDB();
 const app = express();
 
-mongoose.connection.once("open", () => {
-  console.log("DB Name:", mongoose.connection.name);
-  console.log("DB Host:", mongoose.connection.host);
-});
-
 app.use(
   cors({
     // origin: ["http://localhost:5173"],
