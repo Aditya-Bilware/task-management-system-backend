@@ -2,7 +2,8 @@ const baseTemplate = require("./baseTemplate");
 const capitalizeFirstChar = require("../../../utils/capitalizeFirstChar");
 
 const taskCreatedTemplate = ({ task, performedBy }) => {
-  const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  // const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  const taskURL = `https://nec-task-management-system.vercel.app/tasks/${task._id}`;
 
   return {
     subject: `New task assigned - [${task.taskNumber}] ${task.title}`,

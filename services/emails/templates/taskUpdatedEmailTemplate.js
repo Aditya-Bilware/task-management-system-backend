@@ -2,7 +2,8 @@ const baseTemplate = require("./baseTemplate");
 const capitalizeFirstChar = require("../../../utils/capitalizeFirstChar");
 
 const taskUpdatedTemplate = ({ task, activityLog, performedBy }) => {
-  const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  // const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  const taskURL = `https://nec-task-management-system.vercel.app/tasks/${task._id}`;
 
   const isDescriptionUpdated = activityLog.fieldChanged === "description";
 
@@ -23,6 +24,7 @@ const taskUpdatedTemplate = ({ task, activityLog, performedBy }) => {
              &nbsp; • ${
                task?.updatedAt
                  ? new Date(task?.updatedAt).toLocaleDateString("en-IN", {
+                     timeZone: "Asia/Kolkata",
                      day: "numeric",
                      month: "short",
                      year: "numeric",

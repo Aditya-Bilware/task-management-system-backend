@@ -1,7 +1,8 @@
 const baseTemplate = require("./baseTemplate");
 
 const taskDeletedTemplate = ({ task, performedBy }) => {
-  const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  // const taskURL = `http://localhost:5173/tasks/${task._id}`;
+  const taskURL = `https://nec-task-management-system.vercel.app/tasks/${task._id}`;
 
   return {
     subject: `Task Deleted - [${task.taskNumber}] ${task.title}`,
@@ -15,6 +16,7 @@ const taskDeletedTemplate = ({ task, performedBy }) => {
             &nbsp; • ${
               task?.deletedAt
                 ? new Date(task.deletedAt).toLocaleDateString("en-IN", {
+                    timeZone: "Asia/Kolkata",
                     day: "numeric",
                     month: "short",
                     year: "numeric",
