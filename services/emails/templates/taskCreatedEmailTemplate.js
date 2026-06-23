@@ -17,6 +17,7 @@ const taskCreatedTemplate = ({ task, performedBy }) => {
             &nbsp; • ${
               task.createdAt
                 ? new Date(task.createdAt).toLocaleDateString("en-IN", {
+                    timeZone: "Asia/Kolkata",
                     day: "numeric",
                     month: "short",
                     year: "numeric",
