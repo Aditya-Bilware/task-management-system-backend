@@ -3,9 +3,9 @@ const User = require("../models/User");
 
 const fs = require("fs");
 
-const {
-  generateCompletedTaskHistoryReport,
-} = require("../services/reports/taskHistoryExcelReportService");
+// const {
+//   generateCompletedTaskHistoryReport,
+// } = require("../services/reports/taskHistoryExcelReportService");
 const { reportDate } = require("../utils/reportDate");
 
 const generateTaskHistoryReport = async (req, res) => {
