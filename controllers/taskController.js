@@ -2,8 +2,12 @@ const { mongoose } = require("mongoose");
 const Task = require("../models/Task");
 const User = require("../models/User");
 const TaskActivityLog = require("../models/TaskActivityLog");
+const Notification = require("../models/Notification");
 const { normalizeDate } = require("../utils/normalizedDate");
 const { escapeRegex } = require("../utils/regex");
+const createNotifications = require("../utils/createNotification");
+const handleTaskActivity = require("../utils/handleTaskActivity");
+const generateTaskNumber = require("../utils/generateTaskNumber");
 
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
@@ -131,6 +135,8 @@ const createTask = async (req, res) => {
       });
     }
 
+    const taskNumber = await generateTaskNumber();
+
     // create task if all conditions pass
     const task = await Task.create({
       title,
@@ -140,17 +146,32 @@ const createTask = async (req, res) => {
       assignedTo: taskAssignedTo,
       dueDate,
       createdBy: req.user.id,
+      taskNumber,
     });
     // console.log("task created");
 
     // Activity log for task created
 
-    await TaskActivityLog.create({
+    const log = await TaskActivityLog.create({
       taskId: task._id,
 
       action: "created",
 
       performedBy: req.user.id,
+    });
+    await task.populate([
+      {
+        path: "createdBy",
+        select: "name email",
+      },
+      {
+        path: "assignedTo",
+        select: "name email",
+      },
+    ]);
+    await handleTaskActivity({
+      activityLog: log,
+      task,
     });
 
     res.status(201).json({
@@ -198,10 +219,20 @@ const getTasks = async (req, res) => {
 
     // filter by search, status,priority,assignedTo
     if (search) {
-      filter.title = {
-        $regex: search,
-        $options: "i",
-      };
+      filter.$or = [
+        {
+          title: {
+            $regex: escapeRegex(search),
+            $options: "i",
+          },
+        },
+        {
+          taskNumber: {
+            $regex: escapeRegex(search),
+            $options: "i",
+          },
+        },
+      ];
     }
 
     if (status === "active") {
@@ -238,6 +269,8 @@ const getTasks = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .lean();
+
+    const task = await Task.findOne().sort({ taskNumber: -1 });
 
     return res.status(200).json({
       message: "Tasks fetched successfully",
@@ -293,10 +326,20 @@ const getTaskHistory = async (req, res) => {
 
     // search
     if (search) {
-      query.title = {
-        $regex: search,
-        $options: "i",
-      };
+      query.$or = [
+        {
+          title: {
+            $regex: escapeRegex(search),
+            $options: "i",
+          },
+        },
+        {
+          taskNumber: {
+            $regex: escapeRegex(search),
+            $options: "i",
+          },
+        },
+      ];
     }
 
     if (req.user.role === "manager") {
@@ -942,7 +985,25 @@ const updateTask = async (req, res) => {
     }
 
     if (activityLogs.length > 0) {
-      await TaskActivityLog.insertMany(activityLogs);
+      const logs = await TaskActivityLog.insertMany(activityLogs);
+
+      await task.populate([
+        {
+          path: "createdBy",
+          select: "name email",
+        },
+        {
+          path: "assignedTo",
+          select: "name email",
+        },
+      ]);
+
+      for (const log of logs) {
+        await handleTaskActivity({
+          activityLog: log,
+          task,
+        });
+      }
     }
 
     return res.status(200).json({
@@ -993,10 +1054,26 @@ const deleteTask = async (req, res) => {
 
     // Activity log for task deleted
 
-    await TaskActivityLog.create({
+    const log = await TaskActivityLog.create({
       taskId: task._id,
       action: "deleted",
       performedBy: req.user.id,
+    });
+
+    await task.populate([
+      {
+        path: "createdBy",
+        select: "name email",
+      },
+      {
+        path: "assignedTo",
+        select: "name email",
+      },
+    ]);
+
+    await handleTaskActivity({
+      activityLog: log,
+      task,
     });
 
     return res.status(200).json({

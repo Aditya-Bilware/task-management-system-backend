@@ -22,7 +22,7 @@
     "lucide-react": "^1.14.0",
     "mongoose": "^9.6.1",
     "node-cron": "^4.2.1",
-    "nodemailer": "^8.0.9",
+    "nodemailer": "^6.9.16",
     "nodemon": "^3.1.14"
   }
 }

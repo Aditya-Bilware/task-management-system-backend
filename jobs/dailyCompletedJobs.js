@@ -1,10 +1,14 @@
 const cron = require("node-cron");
-const { generateCompletedTaskReport } = require("../services/excelService.js");
+const {
+  generateCompletedTaskReport,
+} = require("../services/reports/dailyReportExcelService.js");
 const Task = require("../models/Task.js");
-const { sendReportEmail } = require("../services/emailService.js");
+const {
+  sendDailyReportEmail,
+} = require("../services/emails/dailyReportEmailService.js");
 
 cron.schedule(
-  "25 9 * * 1-5",
+  "*/1 * * * *",
   async () => {
     console.log("Running daily report job...");
     const fs = require("fs");
@@ -35,7 +39,7 @@ cron.schedule(
 
       const filePath = await generateCompletedTaskReport(tasks);
 
-      await sendReportEmail(filePath);
+      await sendDailyReportEmail(filePath);
 
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 

@@ -6,7 +6,10 @@ const { protect } = require("./middleware/authMiddleware");
 const taskRoutes = require("./routes/taskRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const userRoutes = require("./routes/userRoutes");
-// const reports = require("./jobs/dailyCompletedJobs.js");
+const reportRoutes = require("./routes/reportRoute");
+const notificationRoutes = require("./routes/notificationRoutes");
+const overdueTasksRoute = require("./routes/overdueTasksRoutes");
+// require("./jobs/dailyCompletedJobs.js");
 // require("./jobs/taskSummaryJobs.js");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -41,6 +44,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/reports", reportRoutes);
+
+app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/overdue", overdueTasksRoute);
 
 // const host = "127.0.0.1";
 const port = process.env.PORT || 3000;

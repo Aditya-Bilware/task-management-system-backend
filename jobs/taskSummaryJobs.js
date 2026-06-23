@@ -1,7 +1,9 @@
 const cron = require("node-cron");
 const Task = require("../models/Task");
 
-const { sendTaskAssignmentMail } = require("../services/assignTaskService.js");
+const {
+  sendTaskAssignmentMail,
+} = require("../services/tasks/assignTaskService.js");
 
 cron.schedule("30 9 * * *", async () => {
   console.log("Running task summary email job...");

@@ -1,6 +1,8 @@
 const dayjs = require("dayjs");
 
-const { sendTaskEmail } = require("./emailService");
+const {
+  notificationEmailService,
+} = require("../emails/notificationEmailService.js");
 
 const sendTaskAssignmentMail = async (task) => {
   const dueDate = new Date(task?.dueDate).toLocaleString("en-IN", {

@@ -34,6 +34,7 @@ const getActivityLogs = async (req, res) => {
       taskId: req.params.id,
     })
       .populate("performedBy", "employeeCode name email ")
+      .populate("taskId", "title")
       .sort({ createdAt: -1 })
       .select("-__v")
       .lean();
