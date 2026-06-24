@@ -16,6 +16,9 @@ const getOverdueTasks = async (req, res) => {
 
     const today = getStartOfTodayIST();
 
+    console.log("TODAY", today.toISOString());
+    console.log("TODAY IST:", today);
+
     const filter = {
       isDeleted: false,
 
