@@ -119,9 +119,7 @@ const createTask = async (req, res) => {
 
       const today = getStartOfTodayIST();
 
-      const normalizedDueDate = normalizeDate(taskDueDate);
-
-      if (normalizedDueDate < today) {
+      if (taskDueDate < today) {
         return res.status(400).json({
           message: "Due date cannot be in the past",
         });
@@ -647,9 +645,7 @@ const updateTask = async (req, res) => {
 
         const today = getStartOfTodayIST();
 
-        const normalizedDueDate = normalizeDate(req.body.dueDate);
-
-        if (normalizedDueDate < today) {
+        if (dueDate < today) {
           return res.status(400).json({
             message: "Due date can not be in the past",
           });
