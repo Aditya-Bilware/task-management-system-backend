@@ -5,7 +5,7 @@ const sendDailyReportEmail = async (filePath) => {
   const info = await transporter.sendMail({
     from: "Task Management System <adityabilware407@gmail.com>",
     to: [
-      "adityabilware407@gmail.com",
+      // "adityabilware407@gmail.com",
       "aditya.bilware@necsws.com",
       // "shubham.khuje@necsws.com",
     ],
