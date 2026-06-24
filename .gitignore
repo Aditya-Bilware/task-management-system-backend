@@ -23,8 +23,8 @@ pids
 coverage/
 
 # Generated reports
-reports/
-generated-reports/
+/reports/
+/generated-reports/
 *.xlsx
 
 # OS Files
