@@ -1,13 +1,9 @@
 const getStartOfTodayIST = () => {
-  const nowInIST = new Date(
-    new Date().toLocaleString("en-US", {
+  return new Date(
+    new Date().toLocaleDateString("en-CA", {
       timeZone: "Asia/Kolkata",
     }),
   );
-
-  nowInIST.setHours(0, 0, 0, 0);
-
-  return new Date(nowInIST.getTime());
 };
 
 module.exports = { getStartOfTodayIST };
