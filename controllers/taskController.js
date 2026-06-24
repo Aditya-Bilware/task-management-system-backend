@@ -254,6 +254,12 @@ const getTasks = async (req, res) => {
 
     if (priority) {
       filter.priority = priority;
+
+      if (priority && !status) {
+        filter.status = {
+          $nin: ["done", "rejected"],
+        };
+      }
     }
 
     if (assignedTo && req.user.role === "manager") {
