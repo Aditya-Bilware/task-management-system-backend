@@ -15,7 +15,8 @@ const allowedPriorities = Task.schema.path("priority").enumValues;
 
 const createTask = async (req, res) => {
   try {
-    let { title, description, assignedTo, priority, dueDate } = req.body;
+    let { title, description, assignedTo, status, priority, dueDate } =
+      req.body;
 
     let taskAssignedTo;
     if (req.user.role === "manager") {
@@ -91,8 +92,15 @@ const createTask = async (req, res) => {
       });
     }
 
+    // Invalid status value
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).josn({
+        message: "Invalid status value",
+      });
+    }
+
     // Invalid priority value
-    if (!allowedPriorities.includes(priority)) {
+    if (priority && !allowedPriorities.includes(priority)) {
       return res.status(400).json({
         message: "Invalid priority value",
       });
@@ -142,8 +150,8 @@ const createTask = async (req, res) => {
     const task = await Task.create({
       title,
       description,
-      status: "next",
-      priority: priority || "minor",
+      status: status || "next",
+      priority: priority || "unassigned",
       assignedTo: taskAssignedTo,
       dueDate,
       createdBy: req.user.id,
