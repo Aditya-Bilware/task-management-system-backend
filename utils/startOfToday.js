@@ -11,7 +11,7 @@ const getStartOfTodayIST = () => {
 
   const now = new Date();
 
-  console.log("TMS-0067", new Date("2026-06-23T18:30:00.000Z") < today);
+  console.log("TMS-0067", new Date("2026-06-23T18:30:00.000Z") < now);
 
   const istDate = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
