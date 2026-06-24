@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
   // },
 
   // Render
-
   host: "smtp-relay.brevo.com",
   port: 2525,
   secure: false,

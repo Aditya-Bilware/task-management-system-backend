@@ -8,6 +8,7 @@ const { escapeRegex } = require("../utils/regex");
 const createNotifications = require("../utils/createNotification");
 const handleTaskActivity = require("../utils/handleTaskActivity");
 const generateTaskNumber = require("../utils/generateTaskNumber");
+const { getStartOfTodayIST } = require("../utils/startOfToday");
 
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
@@ -108,7 +109,7 @@ const createTask = async (req, res) => {
         });
       }
 
-      const today = normalizeDate(new Date());
+      const today = getStartOfTodayIST();
 
       const normalizedDueDate = normalizeDate(taskDueDate);
 
@@ -240,7 +241,7 @@ const getTasks = async (req, res) => {
         $in: ["next", "in-progress"],
       };
     } else if (status === "overdue") {
-      const today = normalizeDate(new Date());
+      const today = getStartOfTodayIST();
       filter.dueDate = {
         $lt: today,
       };
@@ -630,7 +631,7 @@ const updateTask = async (req, res) => {
           });
         }
 
-        const today = normalizeDate(new Date());
+        const today = getStartOfTodayIST();
 
         const normalizedDueDate = normalizeDate(req.body.dueDate);
 
@@ -792,7 +793,7 @@ const updateTask = async (req, res) => {
             });
           }
 
-          const today = normalizeDate(new Date());
+          const today = getStartOfTodayIST();
 
           const normalizedDueDate = normalizeDate(req.body.dueDate);
 

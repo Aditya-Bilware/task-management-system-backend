@@ -4,6 +4,7 @@ const Task = require("../models/Task");
 const TaskActivityLog = require("../models/TaskActivityLog");
 
 const { normalizeDate } = require("../utils/normalizedDate");
+const { getStartOfTodayIST } = require("../utils/startOfToday");
 
 const getOverdueTasks = async (req, res) => {
   try {
@@ -13,9 +14,7 @@ const getOverdueTasks = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const today = new Date();
-
-    today.setHours(0, 0, 0, 0);
+    const today = getStartOfTodayIST();
 
     const filter = {
       isDeleted: false,
@@ -71,8 +70,7 @@ const getOverdueTasks = async (req, res) => {
 
 const getOverdueTasksCount = async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getStartOfTodayIST();
 
     const filter = {
       isDeleted: false,
