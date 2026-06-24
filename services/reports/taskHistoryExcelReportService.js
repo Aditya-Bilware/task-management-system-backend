@@ -94,7 +94,7 @@ const generateCompletedTaskHistoryReport = async (
   ];
 
   worksheet.columns = [
-    { key: "taskId", width: 30 },
+    { key: "taskId", width: 20 },
     { key: "title", width: 30 },
     { key: "description", width: 50 },
     { key: "assignedTo", width: 25 },

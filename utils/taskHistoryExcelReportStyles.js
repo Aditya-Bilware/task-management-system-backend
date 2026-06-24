@@ -110,6 +110,7 @@ const applyWorksheetStyles = (worksheet) => {
       };
 
       if (
+        colNumber === 1 ||
         colNumber === 3 ||
         colNumber === 4 ||
         colNumber === 5 ||
