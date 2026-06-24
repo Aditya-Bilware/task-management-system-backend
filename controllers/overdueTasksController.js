@@ -88,7 +88,7 @@ const getOverdueTasks = async (req, res) => {
 
 const getOverdueTasksCount = async (req, res) => {
   try {
-    const today = getStartOfTodayIST();
+    const today = normalizeDate(getStartOfTodayIST());
 
     const filter = {
       isDeleted: false,
