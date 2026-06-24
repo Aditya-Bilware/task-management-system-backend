@@ -16,9 +16,23 @@ const getOverdueTasks = async (req, res) => {
 
     const today = getStartOfTodayIST();
 
-    console.log("TODAY", today.toISOString());
-    console.log("TODAY IST:", today);
+    console.log("TODAY:", today.toISOString());
 
+    const tasks = await Task.find({
+      status: {
+        $nin: ["done", "rejected"],
+      },
+    })
+      .select("taskNumber dueDate")
+      .lean();
+
+    tasks.forEach((task) => {
+      console.log(
+        task.taskNumber,
+        task.dueDate?.toISOString(),
+        task.dueDate < today,
+      );
+    });
     const filter = {
       isDeleted: false,
 
