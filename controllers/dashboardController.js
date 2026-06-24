@@ -33,7 +33,7 @@ const getStats = async (req, res) => {
     const overdueTasks = await Task.countDocuments({
       ...filter,
       dueDate: {
-        $lt: normalizeDate(getStartOfTodayIST()),
+        $lt: getStartOfTodayIST(),
       },
       status: {
         $nin: ["done", "rejected"],
