@@ -9,7 +9,7 @@ const userRoutes = require("./routes/userRoutes");
 const reportRoutes = require("./routes/reportRoute");
 const notificationRoutes = require("./routes/notificationRoutes");
 const overdueTasksRoute = require("./routes/overdueTasksRoutes");
-require("./jobs/dailyCompletedJobs.js");
+// require("./jobs/dailyCompletedJobs.js");
 // require("./jobs/taskSummaryJobs.js");
 const cors = require("cors");
 const mongoose = require("mongoose");
