@@ -14,7 +14,7 @@ const getOverdueTasks = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const today = getStartOfTodayIST();
+    const today = normalizeDate(getStartOfTodayIST());
 
     console.log("TODAY:", today.toISOString());
 
