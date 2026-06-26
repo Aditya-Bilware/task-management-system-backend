@@ -27,8 +27,8 @@ app.use(
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API working");
+app.get("/working", (req, res) => {
+  res.status(200).send("Server is alive");
 });
 
 app.get("/api/test", protect, (req, res) => {
