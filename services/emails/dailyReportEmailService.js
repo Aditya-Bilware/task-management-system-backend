@@ -1,7 +1,8 @@
-const { reportDate } = require("../../utils/reportDate");
+const { getReportDate } = require("../../utils/reportDate");
 const transporter = require("./emailService");
 
 const sendDailyReportEmail = async (filePath) => {
+  const reportDate = getReportDate();
   const info = await transporter.sendMail({
     from: "Task Management System <adityabilware407@gmail.com>",
     to: [

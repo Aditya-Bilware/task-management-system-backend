@@ -4,10 +4,12 @@ const path = require("path");
 const fs = require("fs");
 
 const { applyWorksheetStyles } = require("../../utils/dailyReportExcelStyles");
-const { reportDate } = require("../../utils/reportDate");
+const { getReportDate } = require("../../utils/reportDate");
 
 const generateCompletedTaskReport = async (tasks) => {
   const today = new Date();
+
+  const reportDate = getReportDate();
 
   const workbook = new ExcelJs.Workbook();
 

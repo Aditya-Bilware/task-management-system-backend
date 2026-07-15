@@ -6,7 +6,7 @@ const fs = require("fs");
 const {
   applyWorksheetStyles,
 } = require("../../utils/taskHistoryExcelReportStyles");
-const { reportDate } = require("../../utils/reportDate");
+const { getReportDate } = require("../../utils/reportDate");
 
 const generateCompletedTaskHistoryReport = async (
   tasks,
@@ -15,6 +15,8 @@ const generateCompletedTaskHistoryReport = async (
   generatedBy,
 ) => {
   const today = new Date();
+
+  const reportDate = getReportDate();
 
   const workbook = new ExcelJs.Workbook();
 

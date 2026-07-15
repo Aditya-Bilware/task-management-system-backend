@@ -7,12 +7,14 @@ const {
   generateCompletedTaskHistoryReport,
 } = require("../services/reports/taskHistoryExcelReportService");
 
-const { reportDate } = require("../utils/reportDate");
+const { getReportDate } = require("../utils/reportDate");
 const { getStartOfTodayIST } = require("../utils/startOfToday");
 
 const generateTaskHistoryReport = async (req, res) => {
   try {
     const { fromDate, toDate } = req.body;
+
+    const reportDate = getReportDate();
 
     if (!fromDate || !toDate) {
       return res.status(400).json({
