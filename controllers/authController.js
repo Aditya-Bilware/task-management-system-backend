@@ -8,7 +8,7 @@ const loginUser = async (req, res) => {
   try {
     // console.log("Incoming email:", email);
 
-    const normalizedEmail = email.toLowercase.trim();
+    const normalizedEmail = email.toLowercase().trim();
 
     const user = await User.findOne({ email: normalizedEmail });
 
