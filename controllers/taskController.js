@@ -13,6 +13,11 @@ const { getStartOfTodayIST } = require("../utils/startOfToday");
 const allowedStatuses = Task.schema.path("status").enumValues;
 const allowedPriorities = Task.schema.path("priority").enumValues;
 
+const dependencies = {
+  generateTaskNumber,
+  handleTaskActivity,
+};
+
 const createTask = async (req, res) => {
   try {
     let { title, description, assignedTo, status, priority, dueDate } =
@@ -94,7 +99,7 @@ const createTask = async (req, res) => {
 
     // Invalid status value
     if (status && !allowedStatuses.includes(status)) {
-      return res.status(400).josn({
+      return res.status(400).json({
         message: "Invalid status value",
       });
     }
@@ -142,7 +147,7 @@ const createTask = async (req, res) => {
       });
     }
 
-    const taskNumber = await generateTaskNumber();
+    const taskNumber = await dependencies.generateTaskNumber();
 
     // create task if all conditions pass
     const task = await Task.create({
@@ -176,7 +181,7 @@ const createTask = async (req, res) => {
         select: "name email",
       },
     ]);
-    await handleTaskActivity({
+    await dependencies.handleTaskActivity({
       activityLog: log,
       task,
     });
@@ -283,7 +288,7 @@ const getTasks = async (req, res) => {
       .limit(limit)
       .lean();
 
-    const task = await Task.findOne().sort({ taskNumber: -1 });
+    // const task = await Task.findOne().sort({ taskNumber: -1 });
 
     return res.status(200).json({
       message: "Tasks fetched successfully",
@@ -1101,6 +1106,7 @@ const deleteTask = async (req, res) => {
 
 module.exports = {
   createTask,
+  dependencies,
   getTasks,
   getTaskHistory,
   getTaskById,

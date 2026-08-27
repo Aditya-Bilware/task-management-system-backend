@@ -41,3 +41,7 @@ tmp/
 
 # Nodemon
 .nodemonignore
+
+#test cases
+/Unit_Testing/
+/test/
