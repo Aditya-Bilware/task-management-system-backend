@@ -22,8 +22,14 @@ const generateTaskHistoryReport = async (req, res) => {
       });
     }
 
+    console.log("BACKEND FROM DATE:", fromDate);
+    console.log("BACKEND TO DATE:", toDate);
+
     const startDate = new Date(`${fromDate}T00:00:00.000+05:30`);
     const endDate = new Date(`${toDate}T23:59:59.999+05:30`);
+
+    console.log("BACKEND FROM DATE:", fromDate);
+    console.log("BACKEND TO DATE:", toDate);
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       return res.status(400).json({
