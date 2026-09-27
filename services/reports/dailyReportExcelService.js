@@ -5,6 +5,7 @@ const fs = require("fs");
 
 const { applyWorksheetStyles } = require("../../utils/dailyReportExcelStyles");
 const { getReportDate } = require("../../utils/reportDate");
+const { htmlToPlainText } = require("../../utils/htmlToPlainText");
 
 const generateCompletedTaskReport = async (tasks) => {
   const today = new Date();
@@ -69,7 +70,7 @@ const generateCompletedTaskReport = async (tasks) => {
   worksheet.columns = [
     { key: "taskId", width: 30 },
     { key: "title", width: 30 },
-    { key: "description", width: 45 },
+    { key: "description", width: 60 },
     { key: "assignedTo", width: 25 },
     { key: "priority", width: 18 },
     { key: "createdAt", width: 22 },
@@ -77,11 +78,16 @@ const generateCompletedTaskReport = async (tasks) => {
     { key: "completedAt", width: 22 },
   ];
 
+  worksheet.getColumn("description").alignment = {
+    wrapText: true,
+    vertical: "top",
+  };
+
   tasks.forEach((task) => {
     worksheet.addRow({
       taskId: task.taskNumber,
       title: task.title,
-      description: task.description,
+      description: htmlToPlainText(task.description),
       assignedTo: task.assignedTo?.name || "-",
       priority: task.priority,
 

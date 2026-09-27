@@ -7,6 +7,7 @@ const {
   applyWorksheetStyles,
 } = require("../../utils/taskHistoryExcelReportStyles");
 const { getReportDate } = require("../../utils/reportDate");
+const { htmlToPlainText } = require("../../utils/htmlToPlainText");
 
 const generateCompletedTaskHistoryReport = async (
   tasks,
@@ -98,7 +99,7 @@ const generateCompletedTaskHistoryReport = async (
   worksheet.columns = [
     { key: "taskId", width: 20 },
     { key: "title", width: 30 },
-    { key: "description", width: 50 },
+    { key: "description", width: 60 },
     { key: "assignedTo", width: 25 },
     { key: "priority", width: 18 },
     { key: "createdAt", width: 22 },
@@ -106,11 +107,16 @@ const generateCompletedTaskHistoryReport = async (
     { key: "completedAt", width: 22 },
   ];
 
+  worksheet.getColumn("description").alignment = {
+    wrapText: true,
+    vertical: "top",
+  };
+
   tasks.forEach((task) => {
     worksheet.addRow({
       taskId: task.taskNumber,
       title: task.title,
-      description: task.description,
+      description: htmlToPlainText(task.description),
       assignedTo: task.assignedTo?.name || "-",
       priority: task.priority,
 

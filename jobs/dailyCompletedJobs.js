@@ -8,7 +8,7 @@ const {
 } = require("../services/emails/dailyReportEmailService.js");
 
 cron.schedule(
-  "25 12 * * 1-5",
+  "0 10 * * 1-5",
   async () => {
     console.log("Running daily report job...");
     const fs = require("fs");
@@ -22,8 +22,8 @@ cron.schedule(
         startDate.setDate(startDate.getDate() - 3);
         endDate.setDate(endDate.getDate() - 3);
       } else {
-        startDate.setDate(startDate.getDate());
-        endDate.setDate(endDate.getDate());
+        startDate.setDate(startDate.getDate() - 1);
+        endDate.setDate(endDate.getDate() - 1);
       }
 
       startDate.setHours(0, 0, 0, 0);

@@ -10,8 +10,8 @@ const sendDailyReportEmail = async (filePath) => {
       "aditya.bilware@necsws.com",
       // "shubham.khuje@necsws.com",
     ],
-    subject: `Tast Completion Daily Report : ${reportDate}`,
-    text: "Please find attached the report for today's completed tasks",
+    subject: `Task Completion Daily Report : ${reportDate}`,
+    text: `Please find attached the completed task report for ${reportDate}.`,
     attachments: [
       {
         filename: `CompletedTasks_Report_${reportDate}.xlsx`,
@@ -19,8 +19,6 @@ const sendDailyReportEmail = async (filePath) => {
       },
     ],
   });
-
-  // console.log("MAIL INFO:", info);
 };
 
 module.exports = { sendDailyReportEmail };
