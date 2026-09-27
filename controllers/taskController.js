@@ -75,7 +75,7 @@ const createTask = async (req, res) => {
     }
 
     // max title length
-    if (title.length > 100) {
+    if (title.length > 1000) {
       return res.status(400).json({
         message: "Title is too long",
       });
@@ -585,7 +585,7 @@ const updateTask = async (req, res) => {
         });
       }
 
-      if (normalizedTitle.length > 100) {
+      if (normalizedTitle.length > 1000) {
         return res.status(400).json({
           message: "Title is too long",
         });
@@ -759,7 +759,7 @@ const updateTask = async (req, res) => {
           });
         }
 
-        if (normalizedTitle.length > 100) {
+        if (normalizedTitle.length > 1000) {
           return res.status(400).json({
             message: "Title is too long",
           });
