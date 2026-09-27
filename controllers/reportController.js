@@ -22,8 +22,8 @@ const generateTaskHistoryReport = async (req, res) => {
       });
     }
 
-    const startDate = new Date(fromDate);
-    const endDate = new Date(toDate);
+    const startDate = new Date(`${fromDate}T00:00:00.000+05:30`);
+    const endDate = new Date(`${toDate}T23:59:59.999+05:30`);
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       return res.status(400).json({
