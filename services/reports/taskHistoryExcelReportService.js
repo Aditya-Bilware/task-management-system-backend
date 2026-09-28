@@ -110,6 +110,7 @@ const generateCompletedTaskHistoryReport = async (
   worksheet.getColumn("description").alignment = {
     wrapText: true,
     vertical: "top",
+    horizontal: "left",
   };
 
   tasks.forEach((task) => {
