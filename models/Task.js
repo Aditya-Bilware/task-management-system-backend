@@ -13,7 +13,15 @@ const taskSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["in-progress", "next", "on-hold", "done", "backlog", "rejected"],
+      enum: [
+        "in-progress",
+        "next",
+        "on-hold",
+        "review",
+        "done",
+        "backlog",
+        "rejected",
+      ],
       default: "next",
       index: true,
     },
