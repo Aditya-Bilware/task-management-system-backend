@@ -1,9 +1,14 @@
 const normalizeDate = (date) => {
   const d = new Date(date);
 
-  d.setHours(0, 0, 0, 0);
+  const istDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
 
-  return d;
+  return new Date(`${istDate}T00:00:00+05:30`);
 };
 
 module.exports = { normalizeDate };
